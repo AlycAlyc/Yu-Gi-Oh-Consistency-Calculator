@@ -21,6 +21,7 @@ library(dplyr)
 library(httr)
 library(rvest)
 library(xml2)
+library(stringr)
 library(gdata)
 # Set up work directory
 setwd("/Users/yangchenghu/Desktop/Yugioh")
