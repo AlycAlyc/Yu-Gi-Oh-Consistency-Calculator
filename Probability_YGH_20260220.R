@@ -157,7 +157,7 @@ for (a in 1:runs){
       draw_lock <- 1
     }
     # Pot of Prosperity
-    if (sum(sample.hand$Card.Name.System=="Pot of Prosperity")>=1 & sum(sample.hand$Card.Name.System %in% draw.class.two)<1) {
+    if (sum(sample.hand$Card.Name.System=="Pot of Prosperity")>=1 & sum(sample.hand$Card.Name.System %in% draw.class.two)<1 & draw_lock < 1) {
       # First part of the effect: flip (draw) top 6 cards
       sample.hand.add.count <- sample(sample.deck.count.rest, 6, replace=FALSE)
       sample.hand.add <- My.deck.lf.wf[sample.hand.add.count,]
@@ -177,12 +177,12 @@ for (a in 1:runs){
       for (b in 1:nrow(Full.combo)){
         sample.full.combo.vector <- unname(unlist(Full.combo[b,]))
         sample.full.combo.vector.2 <- sample.full.combo.vector[!is.na(sample.full.combo.vector)]
-        full.count.temp <- c(full.count.temp, all(sample.full.combo.vector.2 %in% sample.hand.vector))
+        full.count.temp <- c(full.count.temp, all(sample.full.combo.vector.2 %in% sample.hand.temp2.vector))
       }
       for (c in 1:nrow(Half.combo)){
         sample.half.combo.vector <- unname(unlist(Half.combo[c,]))
         sample.half.combo.vector.2 <- sample.half.combo.vector[!is.na(sample.half.combo.vector)]
-        half.count.temp <-  c(half.count.temp, all(sample.half.combo.vector.2 %in% sample.hand.vector))
+        half.count.temp <-  c(half.count.temp, all(sample.half.combo.vector.2 %in% sample.hand.temp2.vector))
       }
       # If more than one of the six cards make combo, this sum should be larger than one.
       full.count.temp.s <- full.count.temp.s + sum(full.count.temp)  
@@ -235,7 +235,7 @@ for (a in 1:runs){
   # b-2-1. Discard a random RT or Quick-Play if still don't have any line
   # b-2-2. Discard your entire hand if you don't have any RT or Quick-Play to discard
   if (sum(sample.hand$Card.Name.System %in% draw.class.two)>=1){
-    if (combo.count==0 & sum(sample.hand$Card.Name.System=="Radiant Typhoon Vision") >=1 & ((sum(sample.hand$Card.Name.System %in% "Pot of Prosperity") < 1)|sum(sample.hand$Type =="Quick-Play")>=2)) {
+    if (combo.count==0 & sum(sample.hand$Card.Name.System=="Radiant Typhoon Vision") >=1 & ((sum(sample.hand$Card.Name.System %in% "Pot of Prosperity") < 1)|sum(sample.hand$Type =="Quick-Play",na.rm=T)>=2)) {
       draw_lock <- draw_lock + 1
     # First part of the effect: draw 2 cards
       sample.hand.add.count <- sample(sample.deck.count.rest, 2, replace=FALSE)
@@ -292,12 +292,12 @@ for (a in 1:runs){
           filter(!grepl(pattern, Card.Name, ignore.case = TRUE))
     # After removing the combo piece from the sample hand, if there is still other RT or quick-play in hand, then the
     # hand counts as having combo. Otherwise, the sample hand does not have a combo.
-        if (sum(sample.hand.post.draw2$Type %in% c("Quick-Play"))>=1 | (sum(sample.hand.post.draw2$Card.Name %in% c("Radiant Typhoon"))>=1)) {
+        if (sum(sample.hand.post.draw2$Type %in% c("Quick-Play"),na.rm=T)>=1 | (sum(sample.hand.post.draw2$Card.Name %in% c("Radiant Typhoon"))>=1)) {
           full.count.s <- full.count.s + 1
                   sample.hand <- sample.hand.post.draw2 %>%
           {
-            matches <- str_detect(.$Card.Name, regex("Radiant Typhoon", ignore_case = TRUE)) | .$Type == "Quick-Play"
-            if (sum(matches) == 0) return(.)
+            matches <- stringr:: str_detect(.$Card.Name, regex("Radiant Typhoon", ignore_case = TRUE)) | .$Type == "Quick-Play"
+            if (sum(matches,na.rm=T) == 0) return(.)
             slice(., -sample(which(matches), 1))
           }
         }
@@ -322,8 +322,8 @@ for (a in 1:runs){
             half.count.s <- half.count.s + 1
             sample.hand <- sample.hand.post.draw2 %>%
               {
-                matches <- str_detect(.$Card.Name, regex("Radiant Typhoon", ignore_case = TRUE)) | .$Type == "Quick-Play"
-                if (sum(matches) == 0) return(.)
+                matches <- stringr:: str_detect(.$Card.Name, regex("Radiant Typhoon", ignore_case = TRUE)) | .$Type == "Quick-Play"
+                if (sum(matches,na.rm=T) == 0) return(.)
                 slice(., -sample(which(matches), 1))
               }
           }
@@ -331,8 +331,8 @@ for (a in 1:runs){
             half.count.s <- half.count.s + 0
             sample.hand <- sample.hand.post.draw %>%
               {
-                matches <- str_detect(.$Card.Name, regex("Radiant Typhoon", ignore_case = TRUE)) | .$Type == "Quick-Play"
-                if (sum(matches) == 0) return(.)
+                matches <- stringr:: str_detect(.$Card.Name, regex("Radiant Typhoon", ignore_case = TRUE)) | .$Type == "Quick-Play"
+                if (sum(matches,na.rm=T) == 0) return(.)
                 slice(., -sample(which(matches), 1))
               }
           }
