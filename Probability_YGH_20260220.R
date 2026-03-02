@@ -36,7 +36,7 @@ setwd("/Users/yangchenghu/Desktop/Yugioh")
 # Note, you don't need to input a two- or three-card combo if it contains
 # any one-card starter.
 ### 1. Input data.frame
-deck.name <- c("YGO_Mitsurugi.xlsx")
+deck.name <- c("YGO_YummyDM.xlsx")
 My.deck <- openxlsx::read.xlsx(deck.name, sheet="Deck_list")
 Full.combo <- openxlsx::read.xlsx(deck.name, sheet="Full_combo")
 Half.combo <- openxlsx::read.xlsx(deck.name, sheet="Half_combo")
@@ -198,17 +198,20 @@ for (a in 1:runs){
   dead.count <- c()
   # If the sample hand contains a dead draw combination, remove the dead card
   # before examining the combo.
-  for (k in 1:nrow(Dead.draw)) {
-    sample.dead.draw.vector <- unname(unlist(Dead.draw[k,]))
-    if (all(sample.dead.draw.vector %in% sample.hand.vector)==T) {
-      sample.hand.vector.2 <- sample.hand.vector[sample.hand.vector != sample.dead.draw.vector[1]]
-      dead.count <- dead.count + 1
-    }
-    if (all(sample.dead.draw.vector %in% sample.hand.vector)==F) {
-      sample.hand.vector.2 <- sample.hand.vector
-      dead.count <- dead.count + 0
+  if (nrow(Dead.draw)>=1) {
+    for (k in 1:nrow(Dead.draw)) {
+      sample.dead.draw.vector <- unname(unlist(Dead.draw[k,]))
+      if (all(sample.dead.draw.vector %in% sample.hand.vector)==T) {
+        sample.hand.vector.2 <- sample.hand.vector[sample.hand.vector != sample.dead.draw.vector[1]]
+        dead.count <- dead.count + 1
+      }
+      if (all(sample.dead.draw.vector %in% sample.hand.vector)==F) {
+        sample.hand.vector.2 <- sample.hand.vector
+        dead.count <- dead.count + 0
+      }
     }
   }
+  if (nrow(Dead.draw)<1) {sample.hand.vector.2 <- sample.hand.vector}
   for (b in 1:nrow(Full.combo)){
     sample.full.combo.vector <- unname(unlist(Full.combo[b,]))
     sample.full.combo.vector.2 <- sample.full.combo.vector[!is.na(sample.full.combo.vector)]
